@@ -1,0 +1,66 @@
+
+  name: Build mastodonctl
+
+  on:
+    push:
+      branches:
+        - main
+    workflow_dispatch:
+
+  permissions:
+    contents: write # for creating release + uploading binaries
+
+  jobs:
+    create-release:
+      runs-on: ubuntu-latest
+      steps:
+      - uses: actions/checkout@v3
+      - name: Update continuous tag to latest commit
+        uses: EndBug/latest-tag@latest
+        with:
+          ref: continuous
+      
+      - name: Create a release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: continuous
+          prerelease: true
+          name: "Continuous Build"
+          body: |
+            This is a continuous build release.
+
+            It will always contain a build of the latest version of the code in the main branch.
+
+    build:
+      runs-on: ubuntu-latest
+      needs: create-release
+      strategy:
+        max-parallel: 6 # Be aware that parallel publishing leads to TCP connections being reset by GitHub
+        matrix:
+          # build and publish in parallel: linux/amd64, linux/arm64, windows/amd64, darwin/amd64, darwin/arm64
+          goos: [linux, windows, darwin]
+          goarch: [amd64, arm64]
+          exclude:
+            - goarch: arm64
+              goos: windows
+  
+      steps:
+        - uses: actions/checkout@v3
+
+        - name: Build Go binaries
+          uses: wangyoucao577/go-release-action@v1.38
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            release_tag: "continuous"
+            binary_name: "mastodonctl" # Binary file
+            asset_name: "mastodonctl-${{ matrix.goos }}-${{ matrix.goarch }}" # File of asset in release
+            goversion: "1.19" # Go version being used in go.mod
+            ldflags: "-s -w" # Strip debug symbols etc. (make binaries smaller)
+            goos: ${{ matrix.goos }}
+            goarch: ${{ matrix.goarch }}
+            overwrite: 'TRUE' # Overwrites the existing file if it exists
+            compress_assets: 'OFF' # Do not put in .zip/.tar.gz
+            md5sum: 'OFF' # Do not add bloaty .md5 files
+            retry: 20 # Try to upload the binary 20 times, instead of only 3
+  
