@@ -17,9 +17,9 @@ go install
 echo "Build app into an executable binary"
 go build .
 
-if [ "${GOPATHd}" ]; then
+if [ "${GOPATH}" ]; then
     echo "Add current project dictory to your user PATH"
-    export PATH="$PATH:${GOPATHd}/bin/mastodonctl"
+    export PATH="$PATH:${GOPATH}/bin/mastodonctl"
 else
     echo ""
     echo "(warning) GOPATH variable is unset! Please learn how to set your GOPATH and do it!"
