@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/source
+# shellcheck shell=sh
 
 ###################################################################
 #Script Name	: setup local development environment
