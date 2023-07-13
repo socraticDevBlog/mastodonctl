@@ -7,6 +7,8 @@ temp.json
 conf.json
 
 # Binaries for programs and plugins
+mastodonctl
+
 *.exe
 *.exe~
 *.dll

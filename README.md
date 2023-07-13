@@ -13,24 +13,10 @@ is required. Follow this link: [https://go.dev/dl/](https://go.dev/dl/)
     ```bash
     git clone https://github.com/socraticDevBlog/mastodonctl.git
     ```
-1. Install project
-    ```bash
-    go install
-    ```
-2. Build project
-    ```bash
-    go build .
-    ```
-3. Add current project directory to your user PATH
-  
-    ```bash
-    export PATH="$PATH:${GOPATH}/bin/mastodonctl"
-    ```
 
-4. (required) in order for the binary to be able to read configuration file
+1. Run setup script:
     ```bash
-    current_directory=`pwd`
-    export CONFIG_FILEPATH=${current_directory}/conf.json
+    source ./setup.sh
     ```
 
 `mastodonctl` is now available as CLI tool! 🚀
