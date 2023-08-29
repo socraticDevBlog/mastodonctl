@@ -14,7 +14,20 @@ is required. Follow this link: [https://go.dev/dl/](https://go.dev/dl/)
     git clone https://github.com/socraticDevBlog/mastodonctl.git
     ```
 
-1. Run setup script:
+1. setup golang common configurations in your `.bashrc`, or `.zshrc`, or else configuration file:
+
+```
+# make Golang binary available from your PATH
+export PATH=$PATH:/usr/local/go/bin
+
+# set your GOPATH (if 'go' directory doesn't exist, create it beforehand)
+export GOPATH=$HOME/go
+
+# make mastodonctl executable binary available from your PATH
+export PATH=$PATH:${GOPATH}/bin/mastodonctl
+```
+
+2. Run setup script:
     ```bash
     source ./setup.sh
     ```

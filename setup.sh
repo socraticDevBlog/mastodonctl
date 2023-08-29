@@ -19,8 +19,7 @@ echo "Build app into an executable binary"
 go build .
 
 if [ "${GOPATH}" ]; then
-    echo "Add current project dictory to your user PATH"
-    export PATH="$PATH:${GOPATH}/bin/mastodonctl"
+    echo "GOPATH is set: that's good!"
 else
     echo ""
     echo "(warning) GOPATH variable is unset! Please learn how to set your GOPATH and do it!"
