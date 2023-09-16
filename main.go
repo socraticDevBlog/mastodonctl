@@ -123,18 +123,10 @@ func main() {
 				return nil
 			},
 		}, {
-			Name:      "hashtag",
-			ShortName: "tag",
-			Usage:     "Will get latest post informations about a specific hashtag",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "name",
-					Usage: "Keyword (hashtag) word to search for - without # sign!",
-					Value: "cat",
-				},
-			},
+			Name:  "hashtag",
+			Usage: "Will get latest post informations about a specific hashtag - append searched word after the command",
 			Action: func(c *cli.Context) error {
-				hashtag := c.String("name")
+				hashtag := c.Args().Get(0)
 
 				if len(hashtag) <= 0 {
 					fmt.Println("Error: must provide a hashtag value to look for!")

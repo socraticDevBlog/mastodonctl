@@ -50,14 +50,22 @@ This is possible by editing [`conf.json`](conf.json) file
 
 ## current available commands
 
+### hashtag
+
+query Mastodon server's API for a specific hashtag
+
+```bash
+mastodonctl hashtag duck
+```
+
 ### userinfos
 
 \* requires auth token for the server used
 
-Will query Mastadon server's API for user infos based on their `username`
+Will query Mastodon server's API for user infos based on their `username`
 
 
-### suggested way to store private credentials
+## suggested way to store private credentials
 
 populate `AuthToken` field in [conf.json](conf.json) configuration file
 
