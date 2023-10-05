@@ -76,17 +76,11 @@ func main() {
 	app.Version = APP_VERSION
 	app.Commands = []cli.Command{
 		{
-			Name:      "userinfos",
-			ShortName: "id",
-			Usage:     "Retrieve Mastodon Account ID by username",
-			Flags: []cli.Flag{
-				cli.StringFlag{
-					Name:  "username",
-					Usage: "Username of the targetted Mastodon Account",
-					Value: "socdev",
-				},
-			},
+			Name:  "accounts",
+			Usage: "Retrieve Mastodon Accounts infos by username",
 			Action: func(c *cli.Context) error {
+				userName := c.Args().Get(0)
+
 				var token_val string
 				if len(conf.AuthToken) > 0 {
 					token_val = fmt.Sprintf("Bearer %s", conf.AuthToken)
@@ -95,7 +89,7 @@ func main() {
 				}
 
 				accounts, err := GetAccounts(InAccounts{
-					Username:     c.String("username"),
+					Username:     userName,
 					AuthToken:    token_val,
 					ApiUrl:       conf.ApiUrl,
 					ResultsCount: conf.ResultsDisplayCount,
@@ -115,7 +109,7 @@ func main() {
 				}
 
 				if len(accounts) == 0 {
-					fmt.Println("No results?  Are you sure you have provided a valid APi auth token in conf.json file?")
+					fmt.Println("No results?  Are you sure you have provided a valid APi auth token in conf.json file? or have you NOT provided a username to search?")
 				}
 
 				tbl.Print()
