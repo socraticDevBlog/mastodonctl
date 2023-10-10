@@ -76,6 +76,45 @@ func main() {
 	app.Version = APP_VERSION
 	app.Commands = []cli.Command{
 		{
+			Name:  "status",
+			Usage: "retrieve status info by ID",
+			Action: func(c *cli.Context) error {
+				statusId := c.Args().Get(0)
+				if len(statusId) <= 0 {
+					fmt.Println("Error: must provide a status ID!")
+					return nil
+				}
+
+				var authToken string
+				if len(conf.AuthToken) > 0 {
+					authToken = fmt.Sprintf("Bearer %s", conf.AuthToken)
+				} else {
+					fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
+				}
+
+				status, err := GetStatus(InStatus{
+					Id:        statusId,
+					AuthToken: authToken,
+					ApiUrl:    conf.ApiUrl,
+				})
+				if err != nil {
+					log.Fatal(err)
+				}
+				headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
+				columnFmt := color.New(color.FgHiBlue).SprintfFunc()
+
+				tbl := table.New("user", "content", "favorited count")
+				tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+
+				tbl.AddRow(status.Account.Username, status.Content[0:64], status.FavouritesCount)
+
+				tbl.Print()
+
+				return nil
+
+			},
+		},
+		{
 			Name:  "accounts",
 			Usage: "Retrieve Mastodon Accounts infos by username",
 			Action: func(c *cli.Context) error {
