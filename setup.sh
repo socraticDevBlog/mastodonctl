@@ -19,7 +19,7 @@ echo "Build app into an executable binary"
 go build .
 
 if [ "${GOPATH}" ]; then
-    echo "GOPATH is set: that's good!"
+    echo "GOPATH is set to ${GOPATH}: that's good!"
 else
     echo ""
     echo "(warning) GOPATH variable is unset! Please learn how to set your GOPATH and do it!"
@@ -28,9 +28,9 @@ fi
 
 echo "Export configuration file (conf.json) file to environment variable"
 curr_dir=$(pwd)
-export CONFIG_FILEPATH="${curr_dir}"/conf.json
+export MASTODONCTL_CONFIG_FILEPATH="${curr_dir}"/conf.json
 echo "Your config file is located at:"
-echo "${CONFIG_FILEPATH}"
+echo "${MASTODONCTL_CONFIG_FILEPATH}"
 
 echo ""
 

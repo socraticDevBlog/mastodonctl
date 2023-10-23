@@ -47,8 +47,8 @@ func main() {
 	// not ideal but less evil way
 	// (binary executed away from its directory
 	// doesn't know how to locate conf.json file!)
-	if os.Getenv("CONFIG_FILEPATH") != "" {
-		configFilepath = os.Getenv("CONFIG_FILEPATH")
+	if os.Getenv("MASTODONCTL_CONFIG_FILEPATH") != "" {
+		configFilepath = os.Getenv("MASTODONCTL_CONFIG_FILEPATH")
 	} else {
 		// only works when app is executed from within its directory!
 		configFilepath = "conf.json"
