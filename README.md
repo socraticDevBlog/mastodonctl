@@ -6,6 +6,10 @@ cli client for mastodon social media platform
 
 ## installation
 
+💡 `gnu/linux` and `macOs` are machines on which we work on. while it is
+possible to work over `Windows`, our helpful documentation and scripts won't be
+available to you...
+
 since we don't provide pre-built binaries, having Go installed on your machine
 is required. Follow this link: [https://go.dev/dl/](https://go.dev/dl/)
 
@@ -111,5 +115,5 @@ export PATH="$GOPATH/bin:$PATH"
 
 # mastodonctl
 # a valid conf.json file located beside mastodonctl binary
-export CONFIG_FILEPATH="$GOPATH/bin/conf.json"
+export MASTODONCTL_CONFIG_FILEPATH="$GOPATH/bin/conf.json"
 ```
