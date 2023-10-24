@@ -14,9 +14,10 @@ since we don't provide pre-built binaries, having Go installed on your machine
 is required. Follow this link: [https://go.dev/dl/](https://go.dev/dl/)
 
 0. Clone repo to your local machine (fork repo if you intend to be a Contributor!)
-    ```bash
-    git clone https://github.com/socraticDevBlog/mastodonctl.git
-    ```
+
+   ```bash
+   git clone https://github.com/socraticDevBlog/mastodonctl.git
+   ```
 
 1. setup golang common configurations in your `.bashrc`, or `.zshrc`, or else configuration file:
 
@@ -32,9 +33,9 @@ export PATH=$PATH:${GOPATH}/bin/mastodonctl
 ```
 
 2. Run setup script:
-    ```bash
-    source ./setup.sh
-    ```
+   ```bash
+   source ./setup.sh
+   ```
 
 `mastodonctl` is now available as CLI tool! 🚀
 
@@ -68,7 +69,6 @@ mastodonctl hashtag duck
 
 Will query Mastodon server's API for user infos based on their `username`
 
-
 ## suggested way to store private credentials
 
 populate `AuthToken` field in [conf.json](conf.json) configuration file
@@ -80,8 +80,9 @@ populate `AuthToken` field in [conf.json](conf.json) configuration file
 try out a few commands to see if everything is working properly
 
 ### list users by username
+
 ```bash
-go run . userinfos -username dave
+go run . accounts dave
 ```
 
 Expect:
@@ -93,7 +94,7 @@ Expect:
 Will query Mastadon server's public API for latest post tagged with a specific hashtag
 
 ```bash
-go run . hashtag -name cat
+go run . hashtag cat
 ```
 
 Expect:
@@ -107,7 +108,8 @@ Expect:
 
 ## my local Golang setup
 
-* my `.profile` file
+- my `.profile` file
+
 ```bash
 # golang configs
 export GOPATH=$HOME/go
