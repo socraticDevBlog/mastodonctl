@@ -8,7 +8,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/rodaine/table"
-	"gopkg.in/urfave/cli.v1"
+	"github.com/urfave/cli/v2"
 )
 
 type Conf struct {
@@ -72,122 +72,123 @@ func main() {
 	app.Name = APP_NAME
 	app.Usage = APP_DESCRIPTION
 
-	app.Authors = append(app.Authors, cli.Author{Name: "socraticDev", Email: "socraticdev@gmail.com"})
-	app.Version = APP_VERSION
-	app.Commands = []cli.Command{
-		{
-			Name:  "status",
-			Usage: "retrieve status info by ID",
-			Action: func(c *cli.Context) error {
-				statusId := c.Args().Get(0)
-				if len(statusId) <= 0 {
-					fmt.Println("Error: must provide a status ID!")
-					return nil
-				}
-
-				var authToken string
-				if len(conf.AuthToken) > 0 {
-					authToken = fmt.Sprintf("Bearer %s", conf.AuthToken)
-				} else {
-					fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
-				}
-
-				status, err := GetStatus(InStatus{
-					Id:        statusId,
-					AuthToken: authToken,
-					ApiUrl:    conf.ApiUrl,
-				})
-				if err != nil {
-					log.Fatal(err)
-				}
-				headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
-				columnFmt := color.New(color.FgHiBlue).SprintfFunc()
-
-				tbl := table.New("user", "content", "favorited count")
-				tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-
-				tbl.AddRow(status.Account.Username, status.Content[0:64], status.FavouritesCount)
-
-				tbl.Print()
-
+	statusCmd := cli.Command{
+		Name:  "status",
+		Usage: "retrieve status info by ID",
+		Action: func(c *cli.Context) error {
+			statusId := c.Args().Get(0)
+			if len(statusId) <= 0 {
+				fmt.Println("Error: must provide a status ID!")
 				return nil
+			}
 
-			},
-		},
-		{
-			Name:  "accounts",
-			Usage: "Retrieve Mastodon Accounts infos by username",
-			Action: func(c *cli.Context) error {
-				userName := c.Args().Get(0)
+			var authToken string
+			if len(conf.AuthToken) > 0 {
+				authToken = fmt.Sprintf("Bearer %s", conf.AuthToken)
+			} else {
+				fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
+			}
 
-				var token_val string
-				if len(conf.AuthToken) > 0 {
-					token_val = fmt.Sprintf("Bearer %s", conf.AuthToken)
-				} else {
-					fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
-				}
+			status, err := GetStatus(InStatus{
+				Id:        statusId,
+				AuthToken: authToken,
+				ApiUrl:    conf.ApiUrl,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+			headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
+			columnFmt := color.New(color.FgHiBlue).SprintfFunc()
 
-				accounts, err := GetAccounts(InAccounts{
-					Username:     userName,
-					AuthToken:    token_val,
-					ApiUrl:       conf.ApiUrl,
-					ResultsCount: conf.ResultsDisplayCount,
-				})
-				if err != nil {
-					log.Fatal(err)
-				}
+			tbl := table.New("user", "content", "favorited count")
+			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
 
-				headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
-				columnFmt := color.New(color.FgHiBlue).SprintfFunc()
+			tbl.AddRow(status.Account.Username, status.Content[0:64], status.FavouritesCount)
 
-				tbl := table.New("id", "username", "displayname", "URL", "follower count", "following count")
-				tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+			tbl.Print()
 
-				for _, r := range accounts {
-					tbl.AddRow(r.ID, r.UserName, r.DisplayName, r.URL, r.FollowersCount, r.FollowingCount)
-				}
+			return nil
 
-				if len(accounts) == 0 {
-					fmt.Println("No results?  Are you sure you have provided a valid APi auth token in conf.json file? or have you NOT provided a username to search?")
-				}
-
-				tbl.Print()
-
-				return nil
-			},
-		}, {
-			Name:  "hashtag",
-			Usage: "Will get latest post informations about a specific hashtag - append searched word after the command",
-			Action: func(c *cli.Context) error {
-				hashtag := c.Args().Get(0)
-
-				if len(hashtag) <= 0 {
-					fmt.Println("Error: must provide a hashtag value to look for!")
-					return nil
-				}
-
-				results, err := GetHashtag(InTopics{Hashtag: hashtag, ApiUrl: conf.ApiUrl, ResultsCount: conf.ResultsDisplayCount})
-
-				if err != nil {
-					log.Fatal(err)
-				}
-
-				headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
-				columnFmt := color.New(color.FgHiBlue).SprintfFunc()
-
-				tbl := table.New("hashtag", "username", "media url")
-				tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
-
-				for _, r := range results {
-					tbl.AddRow(r.Hashtag, r.Username, r.MediaURL)
-				}
-
-				tbl.Print()
-
-				return nil
-			},
 		},
 	}
+	accountsCmd := cli.Command{
+		Name:  "accounts",
+		Usage: "Retrieve Mastodon Accounts infos by username",
+		Action: func(c *cli.Context) error {
+			userName := c.Args().Get(0)
+
+			var token_val string
+			if len(conf.AuthToken) > 0 {
+				token_val = fmt.Sprintf("Bearer %s", conf.AuthToken)
+			} else {
+				fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
+			}
+
+			accounts, err := GetAccounts(InAccounts{
+				Username:     userName,
+				AuthToken:    token_val,
+				ApiUrl:       conf.ApiUrl,
+				ResultsCount: conf.ResultsDisplayCount,
+			})
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
+			columnFmt := color.New(color.FgHiBlue).SprintfFunc()
+
+			tbl := table.New("id", "username", "displayname", "URL", "follower count", "following count")
+			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+
+			for _, r := range accounts {
+				tbl.AddRow(r.ID, r.UserName, r.DisplayName, r.URL, r.FollowersCount, r.FollowingCount)
+			}
+
+			if len(accounts) == 0 {
+				fmt.Println("No results?  Are you sure you have provided a valid APi auth token in conf.json file? or have you NOT provided a username to search?")
+			}
+
+			tbl.Print()
+
+			return nil
+		},
+	}
+	hashtagCmd := cli.Command{
+		Name:  "hashtag",
+		Usage: "Will get latest post informations about a specific hashtag - append searched word after the command",
+		Action: func(c *cli.Context) error {
+			hashtag := c.Args().Get(0)
+
+			if len(hashtag) <= 0 {
+				fmt.Println("Error: must provide a hashtag value to look for!")
+				return nil
+			}
+
+			results, err := GetHashtag(InTopics{Hashtag: hashtag, ApiUrl: conf.ApiUrl, ResultsCount: conf.ResultsDisplayCount})
+
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			headerFmt := color.New(color.FgBlue, color.Underline).SprintfFunc()
+			columnFmt := color.New(color.FgHiBlue).SprintfFunc()
+
+			tbl := table.New("hashtag", "username", "media url")
+			tbl.WithHeaderFormatter(headerFmt).WithFirstColumnFormatter(columnFmt)
+
+			for _, r := range results {
+				tbl.AddRow(r.Hashtag, r.Username, r.MediaURL)
+			}
+
+			tbl.Print()
+
+			return nil
+		},
+	}
+
+	app.Authors = append(app.Authors, &cli.Author{Name: "socraticDev", Email: "socraticdev@gmail.com"})
+	app.Version = APP_VERSION
+	app.Commands = append(app.Commands, &statusCmd, &accountsCmd, &hashtagCmd)
 
 	app.Run(os.Args)
 }
