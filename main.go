@@ -78,7 +78,7 @@ func FetchConf() Conf {
 
 	configs_file, err := os.Open(configFilepath)
 	if os.IsNotExist(err) {
-		fmt.Println("Program is unable to open configuration file: conf.json ...")
+		fmt.Println("Program is unable to fetch Auth Token!!")
 		fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
 	} else {
 		defer configs_file.Close()
