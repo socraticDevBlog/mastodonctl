@@ -95,18 +95,7 @@ func FetchConf() Conf {
 	return conf
 }
 
-// todo: move to Utils - PrettyPrint to print struct in a readable way
-func PrettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
-}
-
 func main() {
-
-	app := cli.NewApp()
-	app.Name = APP_NAME
-	app.Usage = APP_DESCRIPTION
-
 	conf := FetchConf()
 
 	statusCmd := cli.Command{
@@ -222,6 +211,9 @@ func main() {
 		},
 	}
 
+	app := cli.NewApp()
+	app.Name = APP_NAME
+	app.Usage = APP_DESCRIPTION
 	app.Authors = append(app.Authors, &cli.Author{Name: "socraticDev", Email: "socraticdev@gmail.com"})
 	app.Version = APP_VERSION
 	app.Commands = append(app.Commands, &statusCmd, &accountsCmd, &hashtagCmd)
