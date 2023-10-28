@@ -122,7 +122,7 @@ export MASTODONCTL_CONFIG_FILEPATH="$GOPATH/bin/conf.json"
 
 ## Docker containerize your CLI
 
-if you don't have go or don't want to modify your local machine, you can try
+if you don't have Golang set up on your machine or don't want to modify it, you can try
 out mastodonctl using Docker!
 
 build the image locally
