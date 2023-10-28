@@ -119,3 +119,20 @@ export PATH="$GOPATH/bin:$PATH"
 # a valid conf.json file located beside mastodonctl binary
 export MASTODONCTL_CONFIG_FILEPATH="$GOPATH/bin/conf.json"
 ```
+
+## Docker containerize your CLI
+
+if you don't have go or don't want to modify your local machine, you can try
+out mastodonctl using Docker!
+
+build the image locally
+
+```bash
+docker build -t mastodonctl:latest .
+```
+
+try it by running the `hashtag` command
+
+```bash
+docker run --env AUTH_TOKEN=<replace with your Mastodon API token> mastodonctl:latest accounts gargron
+```

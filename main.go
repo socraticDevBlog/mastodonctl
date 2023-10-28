@@ -5,10 +5,18 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/fatih/color"
 	"github.com/rodaine/table"
 	"github.com/urfave/cli/v2"
+)
+
+const (
+	APP_NAME                 string = "mastodonctl"
+	APP_DESCRIPTION          string = "commandline client for a Mastodon social media user"
+	APP_VERSION              string = "0.2.0"
+	MSG_EXPECT_BAD_BEHAVIORS string = "Some Commands might not work properly"
 )
 
 type Conf struct {
@@ -17,32 +25,46 @@ type Conf struct {
 	AuthToken           string
 }
 
-func (conf *Conf) DefaultConf() {
-	if conf.ResultsDisplayCount == 0 {
-		conf.ResultsDisplayCount = 10
+// This function returns a Configuration struct
+// it retrieves configuration values either by:
+//
+// 1- environment variables
+//   - RESULT_DISPLAY_COUNT is set to an integer indicating how many results should be fetched
+//   - API_URL is set to the base URL of a Mastodon server
+//   - AUTH_TOKEN is set to the Bearer token required to interact with Mastodon APIs
+//
+// 2- a configuration file located next the the binary file
+//
+// ONLY the Authorization Token value is required to properly operate mastodonctl
+func FetchConf() Conf {
+
+	conf := Conf{ResultsDisplayCount: 10, ApiUrl: "https://mastodon.social", AuthToken: ""}
+
+	// 1- start by fetching conf from environment variables
+	//
+	//   return early if Auth Token value is found
+	//
+	displayCount := os.Getenv("RESULT_DISPLAY_COUNT")
+	if len(displayCount) > 0 {
+		int_val, err := strconv.ParseInt(displayCount, 6, 12)
+		if err == nil {
+			conf.ResultsDisplayCount = int(int_val)
+		}
+	}
+	apiUrl := os.Getenv("API_URL")
+	if len(apiUrl) > 0 {
+		conf.ApiUrl = apiUrl
+	}
+	authToken := os.Getenv("AUTH_TOKEN")
+	if len(authToken) > 0 {
+		conf.AuthToken = authToken
+
+		// return early if gotten Token from environment variable
+		return conf
 	}
 
-	if conf.ApiUrl == "" {
-		conf.ApiUrl = "https://mastodon.social"
-	}
-}
-
-// todo: move to Utils - PrettyPrint to print struct in a readable way
-func PrettyPrint(i interface{}) string {
-	s, _ := json.MarshalIndent(i, "", "\t")
-	return string(s)
-}
-
-func main() {
-	const (
-		APP_NAME                 string = "mastodonctl"
-		APP_DESCRIPTION          string = "commandline client for a Mastodon social media user"
-		APP_VERSION              string = "0.1.0"
-		MSG_EXPECT_BAD_BEHAVIORS string = "Some Commands might not work properly"
-	)
-
-	conf := Conf{}
-
+	// 2 - get conf values from configuration file if no environment variables are set
+	//
 	var configFilepath string
 	// not ideal but less evil way
 	// (binary executed away from its directory
@@ -58,7 +80,6 @@ func main() {
 	if os.IsNotExist(err) {
 		fmt.Println("Program is unable to open configuration file: conf.json ...")
 		fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
-		conf.DefaultConf()
 	} else {
 		defer configs_file.Close()
 		decoder := json.NewDecoder(configs_file)
@@ -67,10 +88,26 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+	if conf.ResultsDisplayCount == 0 {
+		conf.ResultsDisplayCount = 10
+	}
+
+	return conf
+}
+
+// todo: move to Utils - PrettyPrint to print struct in a readable way
+func PrettyPrint(i interface{}) string {
+	s, _ := json.MarshalIndent(i, "", "\t")
+	return string(s)
+}
+
+func main() {
 
 	app := cli.NewApp()
 	app.Name = APP_NAME
 	app.Usage = APP_DESCRIPTION
+
+	conf := FetchConf()
 
 	statusCmd := cli.Command{
 		Name:  "status",
@@ -115,8 +152,6 @@ func main() {
 		Name:  "accounts",
 		Usage: "Retrieve Mastodon Accounts infos by username",
 		Action: func(c *cli.Context) error {
-			userName := c.Args().Get(0)
-
 			var token_val string
 			if len(conf.AuthToken) > 0 {
 				token_val = fmt.Sprintf("Bearer %s", conf.AuthToken)
@@ -124,6 +159,7 @@ func main() {
 				fmt.Println(MSG_EXPECT_BAD_BEHAVIORS)
 			}
 
+			userName := c.Args().Get(0)
 			accounts, err := GetAccounts(InAccounts{
 				Username:     userName,
 				AuthToken:    token_val,

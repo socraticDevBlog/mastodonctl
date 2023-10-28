@@ -1,4 +1,6 @@
-FROM golang:1.21.3 as builder
+FROM golang:alpine as builder
+
+RUN apk --no-cache add ca-certificates
 
 WORKDIR /app
 
@@ -13,6 +15,9 @@ RUN go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -tags urfave_cli_no_docs -o /mastodonctl
 
 FROM scratch
+
+# mastodonctl needs certs to make API calls over TLS
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 COPY --from=builder /mastodonctl /mastodonctl
 
