@@ -134,6 +134,7 @@ docker run mastodonctl:latest
 ```
 
 if you already have a valid Mastodonc API token, you can run any `mastodonctl`
+available commands
 
 ```bash
 docker run --env AUTH_TOKEN=<replace with your Mastodon API token> mastodonctl:latest accounts gargron
