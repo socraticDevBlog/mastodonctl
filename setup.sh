@@ -12,6 +12,8 @@
 #            in order to set environment variables
 ###################################################################
 
+cd src || exit
+
 echo "Install app dependency on local machine"
 go install
 
