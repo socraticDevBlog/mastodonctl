@@ -5,8 +5,8 @@ RUN apk --no-cache add ca-certificates
 WORKDIR /app
 
 # Copy the Go module and all Go source code
-COPY go.mod go.sum ./
-COPY *.go ./
+COPY src/go.mod src/go.sum ./
+COPY src/*.go ./
 
 # Download and install any dependencies
 RUN go mod download
