@@ -21,6 +21,4 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 COPY --from=builder /mastodonctl /mastodonctl
 
-USER 1000
-
 ENTRYPOINT ["/mastodonctl"]
